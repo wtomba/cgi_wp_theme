@@ -1,0 +1,36 @@
+/*
+Theme Name: CGI
+Author: William Tombs
+Author URI: http://www.cgi.com
+Version: 1.0
+*/
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+a:link,
+a:visited {
+  color: #666;
+}
+
+p {
+  line-heigt: 1.65rem;
+}
+
+/* General layout */
+div.container {
+
+}
+
+/* Header */
+.site-header {
+
+}
+
+/* Footer */
+.site-footer {
+  
+}
