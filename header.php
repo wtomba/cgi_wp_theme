@@ -24,22 +24,29 @@
     <div class="container">
 
       <!-- Site header -->
-      <header class="site-header">
-        <div class="contain-to-grid sticky">
-          <nav class="top-bar" data-topbar role="navigation">
-            <ul class="title-area">
-              <li class="name">
-                <h1><a href="<?php echo home_url() ?>"><?php bloginfo('name'); ?></a></h1>
-              </li>
-              <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
-            </ul>
-
-            <section class="top-bar-section">
+      <header class="site-header clearfix">
+        <div class="title row">
+          <div class="large-12 columns">
+            <h1><a href="<?php echo home_url() ?>"><?php bloginfo('name'); ?></a></h1>
+          </div>
+        </div>
+        <?php if (is_page("startpage")): ?>
+          <div class="slider">
+            <?php echo do_shortcode('[wonderplugin_slider id="1"]'); ?>
+          </div>
+        <?php endif ?>
+        <div class="main-nav">
+          <div class="row">
+            <nav class="clearfix large-12 columns">
               <?php wp_nav_menu( array(
-                'theme_location' => 'main-menu'
+                'theme_location' => 'main-menu',
+                'container' => false,
               ) ); ?>
-            </section>
-          </nav>
+            </nav>
+          </div>
         </div>
       </header>
       <!-- /Site header -->
+      <div class="row">
+      <?php if (function_exists('cgi_breadcrumbs')) cgi_breadcrumbs(); ?>
+

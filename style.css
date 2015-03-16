@@ -27,8 +27,40 @@ div.container {
 
 /* Header */
 .site-header {
-
 }
+	.site-header .title {
+	}
+	.site-header .slider {
+		height: 20rem;
+		border-top: .5rem solid #d45d47;
+	}
+	.site-header .main-nav {
+		background-color: #d45d47;
+	}
+		.site-header .main-nav nav {
+		}
+			.site-header .main-nav nav ul {	
+				margin-left: -2.1rem;
+				list-style: none;
+			}
+				.site-header .main-nav nav ul li {
+					float: left;
+					padding: 1rem;
+				}
+					.site-header .main-nav nav ul li a {
+						color: #FFF;  
+						padding: 1.2rem;
+					}
+					.site-header .main-nav nav ul li a:hover {  
+						background-color: #B54E3B;
+					}
+					.site-header .main-nav nav ul li.current-menu-item a,
+					.site-header .main-nav nav ul li.current-page-ancestor a {
+						border-bottom: 2px solid #FFB800;
+						padding-bottom: 1.1rem;
+					}
+
+/* Children Links */
 
 /* Footer */
 .site-footer {
