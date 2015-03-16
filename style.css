@@ -5,6 +5,7 @@ Author URI: http://www.cgi.com
 Version: 1.0
 */
 
+
 body {
   font-family: Arial, sans-serif;
   font-size: 14px;
@@ -24,6 +25,7 @@ p {
 div.container {
 
 }
+/* End General layout */
 
 /* Header */
 .site-header {
@@ -55,14 +57,15 @@ div.container {
 						background-color: #B54E3B;
 					}
 					.site-header .main-nav nav ul li.current-menu-item a,
-					.site-header .main-nav nav ul li.current-page-ancestor a {
+					.site-header .main-nav nav ul li.current-page-ancestor a,
+					.site-header .main-nav nav ul li.current-category-ancestor a {
 						border-bottom: 2px solid #FFB800;
 						padding-bottom: 1.1rem;
 					}
-
-/* Children Links */
+/* End Header */
 
 /* Footer */
 .site-footer {
   
 }
+/*End Footer*/
