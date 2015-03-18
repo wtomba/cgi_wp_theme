@@ -1,12 +1,22 @@
 <?php
   
   // Action
-  add_action('wp_enqueue_scripts', 'cgi_resources');
+  add_action('wp_enqueue_scripts', 'cgi_resources');  
+  add_action('customize_register', 'mytheme_customize_register' );
+  add_action('wp_head', 'cgi_customize_css');
+
+  // Filter
+  add_filter( 'pre_get_posts', 'cgi_filter_child_cats' );
+  add_filter( 'template_include', 'cgi_main_cat_template', 99 );  
+  add_filter( 'excerpt_length', 'cgi_custom_excerpt_length', 999 );
+
+  // Theme
+  add_theme_support( 'post-thumbnails' );
 
   // Navigation menus
   register_nav_menus(array(
-    'main-menu' => __('Main Menu'),
-    'footer-menu' => __('Footer Menu'),
+    'main-menu' => __('Huvudmeny'),
+    'footer-menu' => __('Sidfotmeny'),
   ));
 
   // Javascripts and StyleSheets
@@ -15,6 +25,7 @@
     wp_enqueue_style('style', get_stylesheet_uri());
     wp_enqueue_style('normalize', get_template_directory_uri() . '/css/normalize.css');
     wp_enqueue_style('foundation', get_template_directory_uri() . '/css/foundation.min.css');
+    wp_enqueue_style('foundation-icons', get_template_directory_uri() . '/css/foundation-icons.css');
 
     // JavaScripts
     wp_enqueue_script('modernizr', get_template_directory_uri() . '/js/modernizr.js', '1.0.0', true);
@@ -23,23 +34,174 @@
     wp_enqueue_script('foundation', get_template_directory_uri() . '/js/foundation.min.js', '1.0.0', true);
   } // End cgi_resources
 
+  // Theme customization
+  function mytheme_customize_register( $wp_customize ) {
+    // Sections
+    $wp_customize->add_section( 'cgi_main_menu' , array(
+      'title'      => __( 'Huvudmeny', 'cgi' ),
+      'priority'   => 30,
+    ) );
+    
+    $wp_customize->add_section( 'cgi_content' , array(
+      'title'      => __( 'Innehåll', 'cgi' ),
+      'priority'   => 30,
+    ) );
+
+    // Settings
+      // Main menu
+        $wp_customize->add_setting( 'main_menu_background_color' , array(
+          'default'     => '#D45D47',
+          'transport'   => 'refresh',
+        ) );
+        
+        $wp_customize->add_setting( 'main_menu_active_link_color' , array(
+          'default'     => '#FFB800',
+          'transport'   => 'refresh',
+        ) );
+        
+        $wp_customize->add_setting( 'main_menu_hover_link_color' , array(
+          'default'     => '#B54E3B',
+          'transport'   => 'refresh',
+        ) );
+        
+        $wp_customize->add_setting( 'main_menu_border_color' , array(
+          'default'     => '#BB503C',
+          'transport'   => 'refresh',
+        ) );
+
+      // Content
+        $wp_customize->add_setting( 'content_left_column_border_color' , array(
+          'default'     => '#D45D47',
+          'transport'   => 'refresh',
+        ) );
+
+        $wp_customize->add_setting( 'content_center_column_border_color' , array(
+          'default'     => '#D45D47',
+          'transport'   => 'refresh',
+        ) );
+
+        $wp_customize->add_setting( 'content_right_column_border_color' , array(
+          'default'     => '#D45D47',
+          'transport'   => 'refresh',
+        ) );  
+
+    // Controls
+      // Main menu
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_menu_menu_color', array(
+          'label'        => __( 'Menyfärg', 'cgi' ),
+          'section'    => 'cgi_main_menu',
+          'settings'   => 'main_menu_background_color',
+        ) ) );
+
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_menu_active_link_color', array(
+          'label'        => __( 'Färg på aktiv sida', 'cgi' ),
+          'section'    => 'cgi_main_menu',
+          'settings'   => 'main_menu_active_link_color',
+        ) ) );
+
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_menu_hover_link_color', array(
+          'label'        => __( 'Hoverfärg', 'cgi' ),
+          'section'    => 'cgi_main_menu',
+          'settings'   => 'main_menu_hover_link_color',
+        ) ) );
+
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_menu_border_color', array(
+          'label'        => __( 'Kantfärg mobilversion', 'cgi' ),
+          'section'    => 'cgi_main_menu',
+          'settings'   => 'main_menu_border_color',
+        ) ) );
+
+      // Content
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_left_border_color', array(
+          'label'        => __( 'Kantfärg vänster kolumn', 'cgi' ),
+          'section'    => 'cgi_content',
+          'settings'   => 'content_left_column_border_color',
+        ) ) );
+
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_center_border_color', array(
+          'label'        => __( 'Kantfärg mitten kolumn', 'cgi' ),
+          'section'    => 'cgi_content',
+          'settings'   => 'content_center_column_border_color',
+        ) ) );
+
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_right_border_color', array(
+          'label'        => __( 'Kantfärg höger kolumn', 'cgi' ),
+          'section'    => 'cgi_content',
+          'settings'   => 'content_right_column_border_color',
+        ) ) );
+  } // End mytheme_customize_register()
+
+  // Custom css outputted from admin-panel
+  function cgi_customize_css() {
+    ?>
+      <style type="text/css">
+        /* Main Menu */
+          .site-header .main-nav,
+          .category-nav-container .category-menu-toggle { 
+            background-color: <?php echo get_theme_mod('main_menu_background_color'); ?> !important;
+          }
+            .site-header .main-nav nav ul li,
+            .site-header .main-nav .menu-toggle {
+              border-color: <?php echo get_theme_mod('main_menu_border_color'); ?> !important;
+            }
+              .site-header .main-nav nav ul li a:hover {  
+                background-color: <?php echo get_theme_mod('main_menu_hover_link_color'); ?> !important;
+              }
+              .site-header .main-nav nav ul li.current-menu-item a,
+              .site-header .main-nav nav ul li.current-page-ancestor a,
+              .site-header .main-nav nav ul li.current-category-ancestor a,
+              .site-header .main-nav nav ul li.current-post-ancestor a {
+                box-shadow: 0px 2px 0px <?php echo get_theme_mod('main_menu_active_link_color'); ?> !important;
+              }
+        /* End Main Menu */
+
+        /* Content */
+          .category-nav .border-top {
+            background-color: <?php echo get_theme_mod('content_left_column_border_color'); ?> !important;
+          }
+
+          .post-container,
+          .post {
+            border-color: <?php echo get_theme_mod('content_center_column_border_color'); ?> !important;
+          }
+
+          .right-nav .border-top {
+            background-color: <?php echo get_theme_mod('content_right_column_border_color'); ?> !important;
+          }
+        /* End Content*/
+      </style>
+    <?php
+  } // End cgi_customize_css
+
   // Gets the top most ancestor of the current category
   function cgi_get_top_ancestor_id() {    
-    $current_category = get_category(get_query_var('cat'));
+    if (is_category ()) {
+      $current_category = get_category(get_query_var('cat'));
 
-    if ($current_category->category_parent) {
-      $ancestors = array_reverse(get_ancestors($current_category->term_id, 'category'));
+      if ($current_category->category_parent) {
+        $ancestors = array_reverse(get_ancestors($current_category->term_id, 'category'));
 
-      return $ancestors[0];
+        return $ancestors[0];
+      }
+
+      return $current_category->term_id;
+    } else {
+      global $post;
+      $category = get_the_category($post->ID);
+      if ($category[0]->category_parent) {
+        // Få ut kategori från post.
+        $ancestors = array_reverse(get_ancestors($category[0]->term_id, 'category'));
+
+        return $ancestors[0];
+      }
+      return $category[0]->ID;
     }
-
-    return $current_category->term_id;
   } // End cgi_get_top_ancestor_id
 
   // Displays breadcrumbs
   function cgi_breadcrumbs() {  
     /* === OPTIONS === */  
-    $text['home']   = 'Home'; // text for the 'Home' link  
+    $text['home']   = 'Start'; // text for the 'Home' link  
     $text['category'] = '%s'; // text for a category page  
     $text['search']  = 'Search Results for "%s" Query'; // text for a search results page  
     $text['tag']   = 'Posts Tagged "%s"'; // text for a tag page  
@@ -50,7 +212,7 @@
     $show_on_home  = 0; // 1 - show breadcrumbs on the homepage, 0 - don't show  
     $show_home_link = 1; // 1 - show the 'Home' link, 0 - don't show  
     $show_title   = 1; // 1 - show the title for the links, 0 - don't show  
-    $delimiter   = ' &raquo; '; // delimiter between crumbs  
+    $delimiter   = ' / '; // delimiter between crumbs  
     $before     = '<span class="current">'; // tag before the current crumb  
     $after     = '</span>'; // tag after the current crumb  
     /* === END OF OPTIONS === */  
@@ -67,12 +229,13 @@
     if (is_home() || is_front_page()) {  
     
       if ($show_on_home == 1) {
-        echo '<div class="cgiBreadcrumbs"><a href="' . $home_link . '">' . $text['home'] . '</a></div>';
+        echo '<div class="cgi-breadcrumbs"><a href="' . $home_link . '">' . $text['home'] . '</a></div>';
       }  
     
     } else {  
     
-      echo '<div class="cgiBreadcrumbs" xmlns:v="http://rdf.data-vocabulary.org/#">';  
+      echo '<div class="cgi-breadcrumbs" xmlns:v="http://rdf.data-vocabulary.org/#">';
+      echo '<span class="title">Här är du: </span>';
       if ($show_home_link == 1) { 
         echo '<a href="' . $home_link . '" rel="v:url" property="v:title">' . $text['home'] . '</a>';  
         
@@ -242,5 +405,34 @@
       echo '</div><!-- .breadcrumbs -->';  
     
     }  
-  } // End cgi_breadcrumbs() 
+  } // End cgi_breadcrumbs()
+
+  // Only display posts of current category, not child categorys
+  function cgi_filter_child_cats( $query ) {
+    if ( $query->is_category ) {
+      $queried_object = get_queried_object();
+      $child_cats = (array) get_term_children( $queried_object->term_id, 'category' );
+
+      if ( ! $query->is_admin ) {
+        //exclude the posts in child categories
+        $query->set( 'category__not_in', array_merge( $child_cats ) );
+      }
+    }
+    return $query;
+  } // End cgi_filter_child_cats()
+
+  // Displays a special template for categories with no parents(Main categories)
+  function cgi_main_cat_template ( $template ) {
+    $category = get_category(get_query_var('cat'));
+    $new_template = locate_template( array( 'single-main-category.php' ) );
+    if ($category->term_id && !$category->category_parent && $new_template != '') {
+       return $new_template;
+    }
+    return $template;
+  } // End cgi_main_cat_template()
+
+  // Limit number of letters i n excerpt
+  function cgi_custom_excerpt_length( $length ) {
+    return 20;
+  }
 ?>

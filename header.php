@@ -24,20 +24,16 @@
     <div class="container">
 
       <!-- Site header -->
-      <header class="site-header clearfix">
+      <header class="site-header">
         <div class="title row">
           <div class="large-12 columns">
-            <h1><a href="<?php echo home_url() ?>"><?php bloginfo('name'); ?></a></h1>
+            <h1><a href="<?php echo home_url() ?>"><img src="<?php bloginfo('stylesheet_directory'); ?>/css/images/logo.gif"></a></h1>
           </div>
         </div>
-        <?php if (is_page("startpage")): ?>
-          <div class="slider">
-            <?php echo do_shortcode('[wonderplugin_slider id="1"]'); ?>
-          </div>
-        <?php endif ?>
         <div class="main-nav">
           <div class="row">
-            <nav class="clearfix large-12 columns">
+            <div class="menu-toggle"><span><i class="fi-align-justify"></i>MENY</span></div>
+            <nav class="clearfix">
               <?php wp_nav_menu( array(
                 'theme_location' => 'main-menu',
                 'container' => false,
@@ -48,5 +44,7 @@
       </header>
       <!-- /Site header -->
       <div class="row">
-      <?php if (function_exists('cgi_breadcrumbs')) cgi_breadcrumbs(); ?>
+        <div class="large-12 columns">
+          <?php if (function_exists('cgi_breadcrumbs')) cgi_breadcrumbs(); ?>
+        </div>
 
