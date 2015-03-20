@@ -25,13 +25,20 @@
         while(have_posts()) : the_post(); ?>
           <div class="row">
             <article class="small-post clearfix">
-              <div class="large-4 columns thumbnail">
-                <?php the_post_thumbnail(); ?>
-              </div>
-              <div class="large-8 columns content">
-                <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
-                <?php the_excerpt(); ?>
-              </div>
+              <?php if (has_post_thumbnail()) { ?>                
+                <div class="large-4 medium-4 columns thumbnail">
+                  <?php the_post_thumbnail(); ?>
+                </div>
+                <div class="large-8 medium-8 columns content">
+                  <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
+                  <?php the_excerpt(); ?>
+                </div>
+              <?php } else { ?>
+                <div class="large-12 medium-12 columns content">
+                  <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
+                  <?php the_excerpt(); ?>
+                </div>
+              <?php } ?>
             </article>
           </div>
       <?php

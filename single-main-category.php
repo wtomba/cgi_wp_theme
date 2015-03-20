@@ -1,68 +1,46 @@
 <?php get_header(); ?>
 
-<div class="large-3 medium-5 columns category-nav-container">
-  <div class="category-menu-toggle"><span><i class="fi-align-justify"></i>UNDERMENY</span></div>
-  <nav class="category-nav">
-    <div class="border-top"></div>
-    <h2>KATEGORIER</h2>
-    <h3><a href="<?php echo get_category_link(cgi_get_top_ancestor_id()) ?>"><?php echo mb_strtoupper(get_category(cgi_get_top_ancestor_id())->name); ?></a></h3>
-    <ul>
-      <?php
-        $args = array(
-          'child_of' => cgi_get_top_ancestor_id(),
-          'hide_empty' => false,
-          'title_li' => '',
-        );
-      ?>
-      <?php wp_list_categories($args); ?>
-    </ul>
-  </nav>
-</div>
-<div class="large-6 medium-7 columns">
-  <div class="post-container">
-    <?php
-      if (have_posts()) :
-        while(have_posts()) : the_post(); ?>
-          <div class="row">
-            <article class="small-post">
-              <div class="large-3 columns thumbnail">
-                <?php the_post_thumbnail(); ?>
-              </div>
-              <div class="large-9 columns content">
-                <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
-                <?php the_content(); ?>
-              </div>
-              <div class="large-12 columns" style="display:none;">
-                <?php the_time( get_option( 'date_format' ) ); ?> - <?php the_time() ?> 
-          			av <a href="<?php echo get_author_posts_url(get_the_author_meta('ID')); ?>"><?php the_author(); ?></a>
-          			| Posted in 
-          			<?php 
-          				$categories = get_the_category(); 
-          				$separator = ", ";
-          				$output = '';
-
-          				if ($categories) {
-          						foreach ($categories as $category ) {
-          							$output .= '<a href="'. get_category_link($category->term_id) .'">'.$category->cat_name.'</a>'.$separator;
-          						}
-          				}
-
-          				echo trim($output, $separator);
-                ?>
-              </div>
-            </article>
-          </div>
-      <?php
-        endwhile;
-      else :
-        echo '<p>Inget innehåll har publicerats under denna kategorin än.</p>';
-      endif; ?>
+<?php 
+  $category = get_category(get_query_var('cat'));
+  $args = array(
+      'parent' => $category->term_id,
+      'hide_empty' => false,
+    );
+  $categories = get_categories($args);
+?>
+<div class="large-12 medium-12 columns main-category">
+  <div class="large-8 large-centered columns header">
+    <h1><?php echo $category->name ?></h1>
+    <p><?php echo $category->category_description ?></p>
   </div>
-</div>
-<div class="large-3 medium-12 columns">
-  <div class="right-nav">
-    <div class="border-top"></div>
-    
+  <div class="row" data-equalizer>
+    <?php foreach ($categories as $category) {
+        $args = array (
+            'parent' => $category->term_id,
+            'hide_empty' => false,
+            'number' => 4,
+          );
+        $sub_categories = get_categories($args);
+      ?>
+      <div class="large-3 medium-4 columns" >
+        <div class="child-category" data-equalizer-watch>
+          <div class="image">
+            <?php cfi_featured_image( array( 'size' => 'large', 'title' => 'This is a test...', 'class' => 'my-image', 'alt' => 'My image', 'cat_id' => $category->term_id ) ); ?>
+          </div>
+          <div class="info">
+            <h1><a href="<?php echo get_category_link($category->term_id); ?>"><?php echo $category->name; ?></a></h1>
+            <?php if ($sub_categories): ?>
+              <p>Underkategorier: </p>
+              <ul>
+                <?php foreach ($sub_categories as $sub_category) { ?>
+                  <li><a href="<?php echo get_category_link($sub_category->term_id); ?>"><?php echo $sub_category->name; ?></a></li>
+                <?php } ?>
+              </ul>
+            <?php endif ?>
+          </div>
+        </div>
+      </div>
+    <?php } ?>
   </div>
 </div>
 

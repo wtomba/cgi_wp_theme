@@ -30,9 +30,25 @@
             <h1><a href="<?php echo home_url() ?>"><img src="<?php bloginfo('stylesheet_directory'); ?>/css/images/logo.gif"></a></h1>
           </div>
         </div>
+        <div class="search-container">
+          <div class="form-container clearfix">
+            <div class="row">
+              <div class="large-12 columns">
+                <?php get_search_form(); ?>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="main-nav">
           <div class="row">
-            <div class="menu-toggle"><span><i class="fi-align-justify"></i>MENY</span></div>
+            <div class="clearfix mobile-container">
+              <div class="small-8 columns menu-toggle">
+                <span><i class="fi-align-justify"></i>MENY</span>
+              </div>
+              <div class="small-4 columns search-toggle">                
+                <span><i class="fi-magnifying-glass"></i>SÖK</span>
+              </div>
+            </div>
             <nav class="clearfix">
               <?php wp_nav_menu( array(
                 'theme_location' => 'main-menu',

@@ -2,8 +2,9 @@
   
   // Action
   add_action('wp_enqueue_scripts', 'cgi_resources');  
-  add_action('customize_register', 'mytheme_customize_register' );
+  add_action('customize_register', 'cgi_customize_register' );
   add_action('wp_head', 'cgi_customize_css');
+  add_action('pre_get_posts','cgi_search_filter');
 
   // Filter
   add_filter( 'pre_get_posts', 'cgi_filter_child_cats' );
@@ -12,6 +13,8 @@
 
   // Theme
   add_theme_support( 'post-thumbnails' );
+  add_theme_support( 'html5', array( 'search-form' ) );
+  add_theme_support( 'custom-header' );
 
   // Navigation menus
   register_nav_menus(array(
@@ -35,16 +38,18 @@
   } // End cgi_resources
 
   // Theme customization
-  function mytheme_customize_register( $wp_customize ) {
+  function cgi_customize_register( $wp_customize ) {
     // Sections
     $wp_customize->add_section( 'cgi_main_menu' , array(
       'title'      => __( 'Huvudmeny', 'cgi' ),
-      'priority'   => 30,
+      'priority'   => 1,
+      'description' => 'Utseende på huvudmenyn och tillhörande sökfält',
     ) );
     
     $wp_customize->add_section( 'cgi_content' , array(
       'title'      => __( 'Innehåll', 'cgi' ),
-      'priority'   => 30,
+      'priority'   => 2,
+      'description' => 'Utseende på det innehåll som visas under huvudmenyn och över sidfoten',
     ) );
 
     // Settings
@@ -70,20 +75,10 @@
         ) );
 
       // Content
-        $wp_customize->add_setting( 'content_left_column_border_color' , array(
+        $wp_customize->add_setting( 'content_border_color' , array(
           'default'     => '#D45D47',
           'transport'   => 'refresh',
-        ) );
-
-        $wp_customize->add_setting( 'content_center_column_border_color' , array(
-          'default'     => '#D45D47',
-          'transport'   => 'refresh',
-        ) );
-
-        $wp_customize->add_setting( 'content_right_column_border_color' , array(
-          'default'     => '#D45D47',
-          'transport'   => 'refresh',
-        ) );  
+        ) ); 
 
     // Controls
       // Main menu
@@ -112,22 +107,10 @@
         ) ) );
 
       // Content
-        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_left_border_color', array(
-          'label'        => __( 'Kantfärg vänster kolumn', 'cgi' ),
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_border_color', array(
+          'label'        => __( 'Kantfärg', 'cgi' ),
           'section'    => 'cgi_content',
-          'settings'   => 'content_left_column_border_color',
-        ) ) );
-
-        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_center_border_color', array(
-          'label'        => __( 'Kantfärg mitten kolumn', 'cgi' ),
-          'section'    => 'cgi_content',
-          'settings'   => 'content_center_column_border_color',
-        ) ) );
-
-        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_right_border_color', array(
-          'label'        => __( 'Kantfärg höger kolumn', 'cgi' ),
-          'section'    => 'cgi_content',
-          'settings'   => 'content_right_column_border_color',
+          'settings'   => 'content_border_color',
         ) ) );
   } // End mytheme_customize_register()
 
@@ -136,6 +119,11 @@
     ?>
       <style type="text/css">
         /* Main Menu */
+          .site-header .search-container {
+            height: 140px;
+            background: url(<?php header_image(); ?>);
+            border-color: <?php echo get_theme_mod('main_menu_background_color'); ?> !important;
+          }
           .site-header .main-nav,
           .category-nav-container .category-menu-toggle { 
             background-color: <?php echo get_theme_mod('main_menu_background_color'); ?> !important;
@@ -151,22 +139,23 @@
               .site-header .main-nav nav ul li.current-page-ancestor a,
               .site-header .main-nav nav ul li.current-category-ancestor a,
               .site-header .main-nav nav ul li.current-post-ancestor a {
-                box-shadow: 0px 2px 0px <?php echo get_theme_mod('main_menu_active_link_color'); ?> !important;
+                border-bottom: 2px solid <?php echo get_theme_mod('main_menu_active_link_color'); ?> !important;
               }
         /* End Main Menu */
 
         /* Content */
-          .category-nav .border-top {
-            background-color: <?php echo get_theme_mod('content_left_column_border_color'); ?> !important;
-          }
-
           .post-container,
-          .post {
-            border-color: <?php echo get_theme_mod('content_center_column_border_color'); ?> !important;
+          .post,
+          .main-category .child-category {
+            border-top-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
+          }
+          .main-category .header {
+            border-bottom-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
           }
 
+          .category-nav .border-top,
           .right-nav .border-top {
-            background-color: <?php echo get_theme_mod('content_right_column_border_color'); ?> !important;
+            background-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
           }
         /* End Content*/
       </style>
@@ -175,7 +164,7 @@
 
   // Gets the top most ancestor of the current category
   function cgi_get_top_ancestor_id() {    
-    if (is_category ()) {
+    if (is_category()) {
       $current_category = get_category(get_query_var('cat'));
 
       if ($current_category->category_parent) {
@@ -203,7 +192,7 @@
     /* === OPTIONS === */  
     $text['home']   = 'Start'; // text for the 'Home' link  
     $text['category'] = '%s'; // text for a category page  
-    $text['search']  = 'Search Results for "%s" Query'; // text for a search results page  
+    $text['search']  = 'Resultat för: "%s"'; // text for a search results page  
     $text['tag']   = 'Posts Tagged "%s"'; // text for a tag page  
     $text['author']  = 'Articles Posted by %s'; // text for an author page  
     $text['404']   = 'Error 404'; // text for the 404 page  
@@ -243,8 +232,11 @@
           echo $delimiter;
         }
       }  
+      
+      if ( is_search() ) {  
+        echo $before . sprintf($text['search'], get_search_query()) . $after;  
     
-      if ( is_category() ) {  
+      }else if ( is_category() ) {  
         $this_cat = get_category(get_query_var('cat'), false);
 
         if ($this_cat->parent != 0) {  
@@ -268,9 +260,6 @@
           echo $before . sprintf($text['category'], single_cat_title('', false)) . $after;  
         }
 
-      } elseif ( is_search() ) {  
-        echo $before . sprintf($text['search'], get_search_query()) . $after;  
-    
       } elseif ( is_day() ) {  
         echo sprintf($link, get_year_link(get_the_time('Y')), get_the_time('Y')) . $delimiter;  
         echo sprintf($link, get_month_link(get_the_time('Y'),get_the_time('m')), get_the_time('F')) . $delimiter;  
@@ -425,14 +414,23 @@
   function cgi_main_cat_template ( $template ) {
     $category = get_category(get_query_var('cat'));
     $new_template = locate_template( array( 'single-main-category.php' ) );
-    if ($category->term_id && !$category->category_parent && $new_template != '') {
+    if ($category->term_id && !$category->category_parent && $new_template != '' && $category->slug != "sok") {
        return $new_template;
     }
     return $template;
   } // End cgi_main_cat_template()
 
-  // Limit number of letters i n excerpt
+  // Limit number of letters in excerpt
   function cgi_custom_excerpt_length( $length ) {
     return 20;
-  }
+  } // End cgi_custom_excerpt_length
+
+  // Fix for using a category-page as search result page.
+  function cgi_search_filter($query) {
+    if ( !is_admin() && $query->is_main_query() ) {
+      if ($query->is_search) {
+        $query->set('category_name', '');
+      }
+    }
+  } // End cgi_search_filter
 ?>
