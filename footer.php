@@ -42,6 +42,7 @@
         else {
           jQuery('.main-nav').css('position','static');
           jQuery('.form-container').css('position','relative');
+          jQuery('.form-container').css('top','2.5rem');
           jQuery('.form-container').css('background-color', 'transparent');
           
           if (jQuery('.menu-toggle').is(':visible') && !jQuery('.search-container').is(':visible')) { 
@@ -53,6 +54,8 @@
       });
 
       jQuery(".category-nav ul li:has(.current-cat-parent)").find("ul").show();
+
+      jQuery(".map iframe").height(jQuery(".map iframe").width() * 0.6);
 
     </script>
     <?php wp_footer(); ?>

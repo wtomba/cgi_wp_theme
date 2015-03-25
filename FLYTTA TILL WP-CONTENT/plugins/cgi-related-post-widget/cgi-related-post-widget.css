@@ -1,0 +1,61 @@
+/* Related Posts and Latest Posts */
+.sidebar {
+	margin-bottom: 3rem;
+}
+	.sidebar .border-top {
+		height: 4px;
+		background: #D45D47;
+		position: absolute;
+		top: 0;
+		left: .9rem;
+		right: .9rem;
+		z-index: 200;
+	}
+
+.related-posts,
+.latest-posts {	
+	background-color: #FAFAFA;
+	border: 1px solid #EDEDED;
+	padding: 1rem 0;
+}
+	.related-posts h2,
+	.latest-posts h2 {
+		margin-left: 1.5rem;
+	}
+	.related-posts h3,
+	.latest-posts h3 {
+		margin-left: 1.5rem;
+		margin-bottom: 1rem;
+		font-size: 17px;
+		font-weight: bold;
+	}
+	.related-posts ul,
+	.latest-posts ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+		.related-posts ul li,
+		.latest-posts ul li {
+			border-top: 1px solid #EDEDED;
+			padding: 0.3rem .5rem 0.3rem 1.5rem; 
+		}
+			.related-posts ul li i,
+			.latest-posts ul li i {
+				margin-right: 1rem;
+				vertical-align: middle;
+				font-size: 150%;
+				color: #44697d;
+			}
+			.related-posts ul li a,
+			.latest-posts ul li a {
+				font-size: 100%;
+				margin-bottom: .5rem;
+			}
+			.related-posts ul li p,
+			.latest-posts ul li p {
+				margin: .5rem 0;
+				font-style: italic;
+				font-size: 80%;
+			}
+/* End Related Posts and Latest Posts */

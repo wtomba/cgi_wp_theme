@@ -1,0 +1,85 @@
+/*
+Plugin Name: CGI Category Widget
+Author: William Tombs
+Author URI: http://my.global.logica.com/about.aspx?accountname=GROUPINFRA%5Ctombsw
+*/
+
+/* Category Nav */
+.category-nav-container .category-menu-toggle {
+	padding: .8rem;
+	/*border-bottom: 1px solid #bb503c;*/
+	border-bottom: none;
+	background-color: #D45D47;
+	color: #FFF;
+}
+	.category-nav-container .category-menu-toggle:hover {
+		cursor: pointer;
+	}
+	.category-nav-container .category-menu-toggle i {
+		margin-right: .5rem;
+	}
+.category-nav {
+	display: none;
+	background-color: #FAFAFA;
+	border: 1px solid #EDEDED;
+	padding: 1rem 0;
+}
+	.category-nav .border-top {
+		display: none;
+		height: 4px;
+		background: #D45D47;
+		position: absolute;
+		top: 0;
+		left: .9rem;
+		right: .9rem;
+		z-index: 200;
+	}
+	.category-nav h2 {
+		margin-left: 1.5rem;
+	}
+	.category-nav h3 {
+		margin-left: 1.5rem;
+		margin-bottom: 1rem;
+		font-size: 17px;
+		font-weight: bold;
+	}
+	.category-nav ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+		.category-nav ul li {
+			border-top: 1px solid #EDEDED;
+			padding: 0.3rem .5rem 0.3rem 1.5rem; 
+		}	
+			.category-nav ul li ul {
+				display: none;
+			}
+			.category-nav ul li a {
+				font-size: 14px;
+				border-bottom: none;
+			}
+		.category-nav ul li.current-cat > a {
+			color: #D45D47;
+		}
+			.category-nav ul li.current-cat > ul,
+			.category-nav ul li.current-cat-parent > ul {
+				display: block;
+			}
+	.category-nav ul.children li {
+		border-top: none;
+	}
+
+@media screen and (min-width: 641px) {
+	.category-nav-container .category-menu-toggle {
+		display: none;
+	}
+	.category-nav {
+		display: block;
+	}
+		.category-nav .border-top,
+		.right-nav .border-top {
+			display: block;
+		}
+}
+/* End Category Nav */

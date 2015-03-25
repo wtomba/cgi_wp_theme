@@ -5,9 +5,10 @@
   add_action('customize_register', 'cgi_customize_register' );
   add_action('wp_head', 'cgi_customize_css');
   add_action('pre_get_posts','cgi_search_filter');
+  add_action('widgets_init', 'cgi_widgets_init');
 
   // Filter
-  add_filter( 'pre_get_posts', 'cgi_filter_child_cats' );
+  //add_filter( 'pre_get_posts', 'cgi_filter_child_cats' );
   add_filter( 'template_include', 'cgi_main_cat_template', 99 );  
   add_filter( 'excerpt_length', 'cgi_custom_excerpt_length', 999 );
 
@@ -15,12 +16,29 @@
   add_theme_support( 'post-thumbnails' );
   add_theme_support( 'html5', array( 'search-form' ) );
   add_theme_support( 'custom-header' );
+  add_theme_support( 'post-formats', array( 'link', 'image' ) );
 
   // Navigation menus
   register_nav_menus(array(
     'main-menu' => __('Huvudmeny'),
     'footer-menu' => __('Sidfotmeny'),
   ));
+
+  function cgi_widgets_init() {
+    register_sidebar( array (
+      'name' => 'Left Sidebar',
+      'id' => 'left_sidebar_1',
+      'before_widget' => '',
+      'after_widget' => '',
+    ));
+
+    register_sidebar( array (
+      'name' => 'Right Sidebar 1',
+      'id' => 'right_sidebar_1',
+      'before_widget' => '',
+      'after_widget' => '',
+    ));
+  }
 
   // Javascripts and StyleSheets
   function cgi_resources() {
@@ -73,6 +91,11 @@
           'default'     => '#BB503C',
           'transport'   => 'refresh',
         ) );
+        
+        $wp_customize->add_setting( 'main_menu_search_button_color' , array(
+          'default'     => '#44697d',
+          'transport'   => 'refresh',
+        ) );
 
       // Content
         $wp_customize->add_setting( 'content_border_color' , array(
@@ -106,6 +129,12 @@
           'settings'   => 'main_menu_border_color',
         ) ) );
 
+        $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_menu_search_button_color', array(
+          'label'        => __( 'Färg på sökknapp', 'cgi' ),
+          'section'    => 'cgi_main_menu',
+          'settings'   => 'main_menu_search_button_color',
+        ) ) );
+
       // Content
         $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'content_border_color', array(
           'label'        => __( 'Kantfärg', 'cgi' ),
@@ -119,6 +148,9 @@
     ?>
       <style type="text/css">
         /* Main Menu */
+          .site-header .form-container .search-form .search-submit {
+            background-color: <?php echo get_theme_mod('main_menu_search_button_color'); ?> !important;
+          }
           .site-header .search-container {
             height: 140px;
             background: url(<?php header_image(); ?>);
@@ -141,12 +173,17 @@
               .site-header .main-nav nav ul li.current-post-ancestor a {
                 border-bottom: 2px solid <?php echo get_theme_mod('main_menu_active_link_color'); ?> !important;
               }
+
         /* End Main Menu */
 
         /* Content */
           .post-container,
           .post,
-          .main-category .child-category {
+          .map,
+          .contact,
+          .search-result-container,
+          .main-category .child-category,
+          .category-related-posts {
             border-top-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
           }
           .main-category .header {
@@ -154,16 +191,16 @@
           }
 
           .category-nav .border-top,
-          .right-nav .border-top {
+          .sidebar .border-top {
             background-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
           }
         /* End Content*/
       </style>
     <?php
-  } // End cgi_customize_css
+  } // End cgi_customize_css()
 
-  // Gets the top most ancestor of the current category
-  function cgi_get_top_ancestor_id() {    
+  // Gets the top most category ancestor of the current category or post
+  function cgi_get_top_ancestor_id() {
     if (is_category()) {
       $current_category = get_category(get_query_var('cat'));
 
@@ -185,7 +222,21 @@
       }
       return $category[0]->ID;
     }
-  } // End cgi_get_top_ancestor_id
+  } // End cgi_get_top_ancestor_id()
+
+  // Gets the top most category parent by id
+  function cgi_get_top_category_parent_by_id( $id ) {
+    $category = get_the_category($id); 
+
+    if ($category[0]->category_parent) {
+      // Få ut kategori från post.
+      $ancestors = array_reverse(get_ancestors($category[0]->term_id, 'category'));
+
+      return get_category($ancestors[0]);
+    }
+      
+    return get_category($category[0]->ID);
+  } // End cgi_get_top_category_parent_by_id()
 
   // Displays breadcrumbs
   function cgi_breadcrumbs() {  
@@ -414,7 +465,7 @@
   function cgi_main_cat_template ( $template ) {
     $category = get_category(get_query_var('cat'));
     $new_template = locate_template( array( 'single-main-category.php' ) );
-    if ($category->term_id && !$category->category_parent && $new_template != '' && $category->slug != "sok") {
+    if ($category->term_id && !$category->category_parent && $new_template != '' && $category->slug != "start" && $category->slug != "kartor") {
        return $new_template;
     }
     return $template;
@@ -423,7 +474,7 @@
   // Limit number of letters in excerpt
   function cgi_custom_excerpt_length( $length ) {
     return 20;
-  } // End cgi_custom_excerpt_length
+  } // End cgi_custom_excerpt_length()
 
   // Fix for using a category-page as search result page.
   function cgi_search_filter($query) {
@@ -432,5 +483,5 @@
         $query->set('category_name', '');
       }
     }
-  } // End cgi_search_filter
+  } // End cgi_search_filter()
 ?>

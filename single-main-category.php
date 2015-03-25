@@ -28,7 +28,7 @@
             <?php cfi_featured_image( array( 'size' => 'large', 'title' => 'This is a test...', 'class' => 'my-image', 'alt' => 'My image', 'cat_id' => $category->term_id ) ); ?>
           </div>
           <div class="info">
-            <h1><a href="<?php echo get_category_link($category->term_id); ?>"><?php echo $category->name; ?></a></h1>
+            <h3><a href="<?php echo get_category_link($category->term_id); ?>"><?php echo $category->name; ?></a></h3>
             <?php if ($sub_categories): ?>
               <p>Underkategorier: </p>
               <ul>

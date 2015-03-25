@@ -1,58 +1,43 @@
+<!-- Header -->
 <?php get_header(); ?>
 
-<div class="large-3 medium-5 columns category-nav-container">
-  <div class="category-menu-toggle"><span><i class="fi-align-justify"></i>UNDERMENY</span></div>
-  <nav class="category-nav">
-    <div class="border-top"></div>
-    <h2>KATEGORIER</h2>
-    <h3><a href="<?php echo get_category_link(cgi_get_top_ancestor_id()) ?>"><?php echo mb_strtoupper(get_category(cgi_get_top_ancestor_id())->name); ?></a></h3>
-    <ul>
-      <?php
-        $args = array(
-          'child_of' => cgi_get_top_ancestor_id(),
-          'hide_empty' => false,
-          'title_li' => '',
-        );
-      ?>
-      <?php wp_list_categories($args); ?>
-    </ul>
-  </nav>
-</div>
+<!-- Left Sidebar -->
+<?php 
+  if (is_active_sidebar('left_sidebar_1')) {
+    dynamic_sidebar('left_sidebar_1');
+  } 
+?>
+
+<!-- Content -->
+<?php
+  $category = get_category(get_query_var('cat'));
+  $posts = get_posts(array('category__in' => array($category->term_id), 'post_status'=>'publish', 'order'=>'ASC' ));
+?>
 <div class="large-6 medium-7 columns">
   <div class="post-container">
-    <?php
-      if (have_posts()) :
-        while(have_posts()) : the_post(); ?>
-          <div class="row">
-            <article class="small-post clearfix">
-              <?php if (has_post_thumbnail()) { ?>                
-                <div class="large-4 medium-4 columns thumbnail">
-                  <?php the_post_thumbnail(); ?>
-                </div>
-                <div class="large-8 medium-8 columns content">
-                  <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
-                  <?php the_excerpt(); ?>
-                </div>
-              <?php } else { ?>
-                <div class="large-12 medium-12 columns content">
-                  <h4><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h4>
-                  <?php the_excerpt(); ?>
-                </div>
-              <?php } ?>
-            </article>
-          </div>
+    <div class="row">
       <?php
-        endwhile;
-      else :
-        echo '<p>Inget innehåll har publicerats under denna kategorin än.</p>';
-      endif; ?>
+        if ($posts)
+        {
+          foreach ($posts as $post) {
+            setup_postdata($post);
+            get_template_part('parts/small-post');
+          }
+        } else {
+          echo '<p>Inget innehåll har publicerats under denna kategorin än.</p>';
+        } 
+      ?>
+    </div>
   </div>
 </div>
-<div class="large-3 medium-12 columns">
-  <div class="right-nav">
-    <div class="border-top"></div>
-    
-  </div>
-</div>
+<?php wp_reset_query(); ?>
 
+<!-- Right Sidebars -->
+<?php
+  if (is_active_sidebar('right_sidebar_1')) {
+    dynamic_sidebar('right_sidebar_1');
+  }
+?>
+
+<!-- Footer -->
 <?php  get_footer(); ?>
