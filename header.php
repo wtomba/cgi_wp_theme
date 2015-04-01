@@ -14,6 +14,7 @@
   <head>
     <meta charset="<?php bloginfo('charset') ?>">
     <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><?php bloginfo('name'); ?></title>
 
     <?php wp_head(); ?>
@@ -30,15 +31,28 @@
             <h1><a href="<?php echo home_url() ?>"><img src="<?php bloginfo('stylesheet_directory'); ?>/css/images/logo.gif"></a></h1>
           </div>
         </div>
-        <div class="search-container">
-          <div class="form-container clearfix">
-            <div class="row">
-              <div class="large-12 columns">
-                <?php get_search_form(); ?>
+        <?php if (is_page("startpage")) { ?>
+          <div class="slider-container">
+            <?php echo do_shortcode("[metaslider id=153]"); ?>
+            <div class="form-container clearfix">
+              <div class="row">
+                <div class="large-12 columns">
+                  <?php get_search_form(); ?>
+                </div>
+              </div>
+            </div>     
+          </div>
+        <?php } else { ?>
+          <div class="search-container">
+            <div class="form-container clearfix">
+              <div class="row">
+                <div class="large-12 columns">
+                  <?php get_search_form(); ?>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        <?php } ?>
         <div class="main-nav">
           <div class="row">
             <div class="clearfix mobile-container">

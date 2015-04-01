@@ -183,7 +183,8 @@
           .contact,
           .search-result-container,
           .main-category .child-category,
-          .category-related-posts {
+          .category-related-posts,
+          .slider-container {
             border-top-color: <?php echo get_theme_mod('content_border_color'); ?> !important;
           }
           .main-category .header {
@@ -481,6 +482,7 @@
     if ( !is_admin() && $query->is_main_query() ) {
       if ($query->is_search) {
         $query->set('category_name', '');
+        //$query->set('category__not_in', 57);
       }
     }
   } // End cgi_search_filter()
